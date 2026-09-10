@@ -1,0 +1,57 @@
+services:
+  - type: postgres
+    name: scheduler-db
+    plan: free
+
+  - type: web
+    name: scheduler-api
+    runtime: docker
+    repo: https://github.com/Samarth6840/Scheduler.git
+    plan: free
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /api/emails/stats
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scheduler-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://scheduler-ui.onrender.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REDIS_URL
+        value: redis://localhost:6379
+      - key: ES_URL
+        value: http://localhost:9200
+      - key: GOOGLE_CALLBACK_URL
+        value: https://scheduler-api.onrender.com/api/auth/google/callback
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+  # - type: web
+  #   name: scheduler-es
+  #   runtime: docker
+  #   repo: https://github.com/Samarth6840/Scheduler.git
+  #   plan: standard
+  #   dockerContext: ./backend
+  #   dockerfilePath: ./backend/Dockerfile.es
+  #   disk:
+  #     name: es-data
+  #     mountPath: /usr/share/elasticsearch/data
+  #     sizeGB: 2
+  #   envVars:
+  #     - key: ES_URL
+  #       value: http://localhost:9200
+
+  - type: web
+    name: scheduler-ui
+    runtime: static
+    repo: https://github.com/Samarth6840/Scheduler.git
+    buildCommand: cd scheduler && npm ci && npm run build
+    publishPath: scheduler/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://scheduler-api.onrender.com

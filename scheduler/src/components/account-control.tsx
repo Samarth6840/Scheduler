@@ -1,11 +1,11 @@
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { User } from '@/lib/api'
+import { API_BASE, type User } from '@/lib/api'
 
 export function AccountControl({ user, vertical = false }: { user: User | null; vertical?: boolean }) {
   if (!user) {
     return (
-      <a href="/api/auth/google" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+      <a href={`${API_BASE}/api/auth/google`} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
         Connect Google
       </a>
     )

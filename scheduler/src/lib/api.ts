@@ -50,6 +50,7 @@ export interface CreateEmailInput {
 }
 
 const TOKEN_KEY = 'scheduler_token'
+export const API_BASE = ((import.meta.env.VITE_API_URL as string | undefined) ?? '').replace(/\/+$/, '')
 
 function authHeaders(): Record<string, string> {
   const token = localStorage.getItem(TOKEN_KEY)
@@ -61,7 +62,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     ...((init?.headers as Record<string, string>) ?? {}),
     ...authHeaders(),
   }
-  const res = await fetch(path, { ...init, headers })
+  const res = await fetch(API_BASE + path, { ...init, headers })
   if (!res.ok) throw new Error(`API request failed with status ${res.status}`)
   return res.json() as Promise<T>
 }
@@ -74,7 +75,7 @@ export function persistTokenFromUrl(): void {
 }
 
 export function fetchMe(): Promise<User | null> {
-  return fetch('/api/auth/me', { headers: authHeaders() })
+  return fetch(API_BASE + '/api/auth/me', { headers: authHeaders() })
     .then((res) => (res.status === 401 ? null : res.json()))
     .then((data) => {
       const user = (data as { user?: User } | null)?.user

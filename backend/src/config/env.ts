@@ -10,18 +10,33 @@ function int(name: string, fallback: number): number {
   return Number.isFinite(v) && v > 0 ? v : fallback;
 }
 
-export const env = {
-  port: int("PORT", 5001),
-  frontendUrl: required("FRONTEND_URL", "http://localhost:5173"),
-  jwtSecret: required("JWT_SECRET", "dev-secret"),
-
-  pg: {
+function pgConfig(): { host: string; port: number; user: string; password: string; db: string } {
+  const url = process.env.DATABASE_URL;
+  if (url) {
+    const parsed = new URL(url);
+    return {
+      host: parsed.hostname,
+      port: Number(parsed.port || 5432),
+      user: decodeURIComponent(parsed.username),
+      password: decodeURIComponent(parsed.password),
+      db: parsed.pathname.replace(/^\//, ""),
+    };
+  }
+  return {
     host: required("PG_HOST", "localhost"),
     port: int("PG_PORT", 5432),
     user: required("PG_USER", "scheduler"),
     password: required("PG_PASSWORD", "scheduler"),
     db: required("PG_DB", "scheduler"),
-  },
+  };
+}
+
+export const env = {
+  port: int("PORT", 5001),
+  frontendUrl: required("FRONTEND_URL", "http://localhost:5173"),
+  jwtSecret: required("JWT_SECRET", "dev-secret"),
+
+  pg: pgConfig(),
 
   redisUrl: required("REDIS_URL", "redis://localhost:6379"),
   esUrl: required("ES_URL", "http://localhost:9200"),
