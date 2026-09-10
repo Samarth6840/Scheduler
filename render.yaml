@@ -8,8 +8,7 @@ services:
     runtime: docker
     repo: https://github.com/Samarth6840/Scheduler.git
     plan: free
-    dockerContext: ./backend
-    dockerfilePath: ./backend/Dockerfile
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /api/emails/stats
     envVars:
       - key: DATABASE_URL
@@ -36,7 +35,6 @@ services:
   #   runtime: docker
   #   repo: https://github.com/Samarth6840/Scheduler.git
   #   plan: standard
-  #   dockerContext: ./backend
   #   dockerfilePath: ./backend/Dockerfile.es
   #   disk:
   #     name: es-data
