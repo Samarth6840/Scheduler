@@ -17,7 +17,7 @@ services:
           name: scheduler-db
           property: connectionString
       - key: FRONTEND_URL
-        value: https://scheduler-ui.onrender.com
+        value: https://YOUR-APP.vercel.app
       - key: JWT_SECRET
         generateValue: true
       - key: REDIS_URL
@@ -45,13 +45,3 @@ services:
   #   envVars:
   #     - key: ES_URL
   #       value: http://localhost:9200
-
-  - type: web
-    name: scheduler-ui
-    runtime: static
-    repo: https://github.com/Samarth6840/Scheduler.git
-    buildCommand: cd scheduler && npm ci && npm run build
-    publishPath: scheduler/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://scheduler-api.onrender.com
