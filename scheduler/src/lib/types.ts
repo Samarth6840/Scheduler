@@ -1,0 +1,1 @@
+export type ViewKey = 'overview' | 'email-log' | 'schedule-email'
