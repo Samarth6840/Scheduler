@@ -10,7 +10,14 @@ function int(name: string, fallback: number): number {
   return Number.isFinite(v) && v > 0 ? v : fallback;
 }
 
-function pgConfig(): { host: string; port: number; user: string; password: string; db: string } {
+function pgConfig(): {
+  host: string
+  port: number
+  user: string
+  password: string
+  db: string
+  ssl: { rejectUnauthorized: boolean } | undefined
+} {
   const url = process.env.DATABASE_URL;
   if (url) {
     const parsed = new URL(url);
@@ -20,6 +27,9 @@ function pgConfig(): { host: string; port: number; user: string; password: strin
       user: decodeURIComponent(parsed.username),
       password: decodeURIComponent(parsed.password),
       db: parsed.pathname.replace(/^\//, ""),
+      ssl: parsed.hostname.endsWith("postgres.render.com")
+        ? { rejectUnauthorized: false }
+        : undefined,
     };
   }
   return {
@@ -28,6 +38,7 @@ function pgConfig(): { host: string; port: number; user: string; password: strin
     user: required("PG_USER", "scheduler"),
     password: required("PG_PASSWORD", "scheduler"),
     db: required("PG_DB", "scheduler"),
+    ssl: undefined,
   };
 }
 

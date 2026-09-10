@@ -7,6 +7,7 @@ export const pool = new Pool({
   user: env.pg.user,
   password: env.pg.password,
   database: env.pg.db,
+  ssl: env.pg.ssl,
 });
 
 export async function initDb() {
